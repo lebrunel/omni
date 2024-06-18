@@ -21,7 +21,7 @@ defmodule Omni.Providers.Google do
   """
   use Omni.Provider
 
-  @api_key Application.compile_env(:omni, [__MODULE__, :api_key])
+  @api_key Application.compile_env(:omni, [__MODULE__, :api_key], System.get_env("GOOGLE_API_KEY"))
 
   @function_calling_mode [
     "AUTO",	                            # Default, model decides to predict either a function call or a natural language response.

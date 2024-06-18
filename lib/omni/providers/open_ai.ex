@@ -29,7 +29,7 @@ defmodule Omni.Providers.OpenAI do
   """
   use Omni.Provider
 
-  @api_key Application.compile_env(:omni, [__MODULE__, :api_key])
+  @api_key Application.compile_env(:omni, [__MODULE__, :api_key], System.get_env("OPENAI_API_KEY"))
 
   base_url "https://api.openai.com/v1"
   endpoint "/chat/completions"

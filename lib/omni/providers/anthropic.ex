@@ -22,7 +22,7 @@ defmodule Omni.Providers.Anthropic do
   """
   use Omni.Provider
 
-  @api_key Application.compile_env(:omni, [__MODULE__, :api_key])
+  @api_key Application.compile_env(:omni, [__MODULE__, :api_key], System.get_env("ANTHROPIC_API_KEY"))
 
   @sse_events [
     "message_start",
