@@ -23,7 +23,7 @@ The package can be installed by adding `omni` to your list of dependencies in `m
 ```elixir
 def deps do
   [
-    {:omni, "#{@version}"}
+    {:omni, "~> 0.0.1"}
   ]
 end
 ```
