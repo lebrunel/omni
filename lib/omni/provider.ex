@@ -87,8 +87,7 @@ defmodule Omni.Provider do
   @typedoc """
   Request headers
 
-  Can be any Enumerable containing keys and values, and encoded as `Req`
-  specifies:
+  Can be any Enumerable containing keys and values. Handled by `Req` as follows:
 
   - atom header names are turned into strings, replacing _ with -. For example, :user_agent becomes "user-agent".
   - string header names are downcased.

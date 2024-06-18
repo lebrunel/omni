@@ -29,26 +29,103 @@ defmodule Omni do
     ]
   end
   ```
-  ## Usage
+  ## Quickstart
 
-  - Making requests (#todo)
-  - Streaming (#todo)
+  To chat with an LLM, initialize a [`t:provider/0`](`t:Omni.Provider.t/0`) with
+  `init/2`, and then send a [`t:request/0`](`t:Omni.Provider.request/0`), using
+  one of `generate/2`, `async/2` or `stream/2`. Refer to the schema
+  documentation for each provider to ensure you construct a valid request.
+
+  ```elixir
+  iex> provider = Omni.init(:openai)
+  iex> Omni.generate(provider, model: "gpt-4o", messages: [
+  ...>   %{role: "user", content: "Write a haiku about the Greek Gods"}
+  ...> ])
+  {:ok, %{"object" => "chat.completion", "choices" => [...]}}
+  ```
+
+  ## Streaming
+
+  Omni supports streaming request through `async/2` or `stream/2`.
+
+  Calling `async/2` returns a `t:Task.t/0`, which asynchronously sends text
+  delta messages to the calling process. Using the `:stream_to` request option
+  allows you to control the receiving process.
+
+  The example below demonstrates making a streaming request in a LiveView event,
+  and sends each of the streaming messages back to the same LiveView process.
+
+  ```elixir
+  defmodule MyApp.ChatLive do
+    use Phoenix.LiveView
+
+    # When the client invokes the "prompt" event, create a streaming request and
+    # asynchronously send messages back to self.
+    def handle_event("prompt", %{"message" => prompt}, socket) do
+      {:ok, task} = Omni.async(Omni.init(:openai), [
+        model: "gpt-4o",
+        messages: [
+          %{role: "user", content: "Write a haiku about the Greek Gods"}
+        ]
+      ])
+
+      {:noreply, assign(socket, current_request: task)}
+    end
+
+    # The streaming request sends messages back to the LiveView process.
+    def handle_info({_request_pid, {:data, _data}} = message, socket) do
+      pid = socket.assigns.current_request.pid
+      case message do
+        {:omni, ^pid, {:chunk, %{"choices" => choices, "finish_reason" => nil}}} ->
+          # handle each streaming chunk
+
+        {:omni, ^pid, {:chunk, %{"choices" => choices}}} ->
+          # handle the final streaming chunk
+      end
+    end
+
+    # Tidy up when the request is finished
+    def handle_info({ref, {:ok, _response}}, socket) do
+      Process.demonitor(ref, [:flush])
+      {:noreply, assign(socket, current_request: nil)}
+    end
+  end
+  ```
+
+  Alternatively, use `stream/2` to collect the streaming responses into an
+  `t:Enumerable.t/0` that can be used with Elixir's `Stream` functions.
+
+  ```elixir
+  iex> provider = Omni.init(:openai)
+  iex> {:ok, stream} = Omni.stream(provider, model: "gpt-4o", messages: [
+  ...>   %{role: "user", content: "Write a haiku about the Greek Gods"}
+  ...> ])
+
+  iex> stream
+  ...> |> Stream.each(&IO.inspect/1)
+  ...> |> Stream.run()
+  ```
+
+  Because this function builds the `t:Enumerable.t/0` by calling `receive/1`,
+  take care using `stream/2` inside `GenServer` callbacks as it may cause the
+  GenServer to misbehave.
   """
   alias Omni.{APIError, Provider}
 
   defdelegate init(provider, opts \\ []), to: Provider
 
   @doc """
-  Asynchronously generates a chat completion using the given
-  `t:Omni.Provider.t/0` and `t:request/0`. Returns a `t:Task.t/0`.
+  Asynchronously generates a chat completion using the given [`t:provider/0`](`t:Omni.Provider.t/0`)
+  and [`t:request/0`](`t:Omni.Provider.request/0`). Returns a `t:Task.t/0`.
 
   Within your code, you should manually define a `receive/1` block (or setup
   `c:GenServer.handle_info/2` callbacks) to receive the message stream.
 
   ## Additional request options
 
-  In addition to the `t:request/0` options for the given `t:Omni.Provider.t/0`,
-  this function accepts the following options:
+  In addition to the [`t:request/0`](`t:Omni.Provider.request/0`) options for
+  the given [`t:provider/0`](`t:Omni.Provider.t/0`), this function accepts the
+  following options:
 
   - `:stream-to` - Pass a `t:pid/0` to control the receiving process.
 
@@ -99,8 +176,9 @@ defmodule Omni do
   end
 
   @doc """
-  Generates a chat completion using the given `t:Omni.Provider.t/0` and
-  `t:request/0`. Synchronously returns a `t:response/0`.
+  Generates a chat completion using the given [`t:provider/0`](`t:Omni.Provider.t/0`)
+  and [`t:request/0`](`t:Omni.Provider.request/0`). Synchronously returns a
+  [`t:response/0`](`t:Omni.Provider.response/0`).
 
   ## Example
 
@@ -138,8 +216,8 @@ defmodule Omni do
   end
 
   @doc """
-  Asynchronously generates a chat completion using the given
-  `t:Omni.Provider.t/0` and `t:request/0`. Returns an `t:Enumerable.t/0`.
+  Asynchronously generates a chat completion using the given [`t:provider/0`](`t:Omni.Provider.t/0`)
+  and [`t:request/0`](`t:Omni.Provider.request/0`). Returns an `t:Enumerable.t/0`.
 
   Because this function builds the `t:Enumerable.t/0` by calling `receive/1`,
   using this function inside `GenServer` callbacks may cause the GenServer to
