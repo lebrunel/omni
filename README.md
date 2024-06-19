@@ -25,7 +25,7 @@ The package can be installed by adding `omni` to your list of dependencies in `m
 ```elixir
 def deps do
   [
-    {:omni, "~> 0.0.1"}
+    {:omni, "~> 0.1"}
   ]
 end
 ```
