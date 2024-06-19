@@ -20,18 +20,28 @@ defmodule Omni.Providers.OpenAI do
   %Omni.Provider{mod: Omni.Providers.OpenAI, req: %Req.Request{}}
   ```
 
-  ## Other configuration
+  ## OpenAI configuration
 
   This Provider accepts the following initialization options:
 
   - `:organization_id` - When given, sets the `openai-organization` header.
   - `:project_id` - When given, sets the `openai-project` header.
+
+  ## Base URL
+
+  Many LLM providers mirror OpenAI's API. In such cases, you can use this
+  Provider module and pass the `:base_url` option to `Omni.init/2`:
+
+  ```elixir
+  iex> Omni.init(:ollama, base_url: "https://api.together.xyz/v1")
+  %Omni.Provider{mod: Omni.Providers.OpenAI, req: %Req.Request{}}
+  ```
   """
   use Omni.Provider
 
   @api_key Application.compile_env(:omni, [__MODULE__, :api_key], System.get_env("OPENAI_API_KEY"))
+  @base_url "https://api.openai.com/v1"
 
-  base_url "https://api.openai.com/v1"
   endpoint "/chat/completions"
   stream_endpoint "/chat/completions", stream: true
 
@@ -213,6 +223,9 @@ defmodule Omni.Providers.OpenAI do
       doc: "A unique identifier representing your end-user.",
     ]
   ]
+
+  @impl true
+  def base_url(opts), do: Keyword.get(opts, :base_url, @base_url)
 
   @impl true
   def headers(opts \\ []) do

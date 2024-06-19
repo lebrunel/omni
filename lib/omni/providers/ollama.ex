@@ -17,6 +17,8 @@ defmodule Omni.Providers.Ollama do
   """
   use Omni.Provider
 
+  @base_url "http://localhost:11434/api"
+
   headers %{content_type: "application/json"}
   endpoint "/chat"
   stream_endpoint "/chat", stream: true
@@ -67,9 +69,7 @@ defmodule Omni.Providers.Ollama do
   ]
 
   @impl true
-  def base_url(opts) do
-    Keyword.get(opts, :base_url, "http://localhost:11434/api")
-  end
+  def base_url(opts), do: Keyword.get(opts, :base_url, @base_url)
 
   @impl true
   def parse_stream(data) do

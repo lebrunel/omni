@@ -115,6 +115,11 @@ defmodule Omni.Providers.OpenAITest do
       assert %Omni.Provider{req: req} = Omni.init(:openai, project_id: "test123")
       assert "test123" in req.headers["openai-project"]
     end
+
+    test "sets base URL from opts" do
+      assert %Omni.Provider{req: req} = Omni.init(:openai, base_url: "http://host.com/api")
+      assert req.options.base_url == "http://host.com/api"
+    end
   end
 
   describe "Omni chat functions" do

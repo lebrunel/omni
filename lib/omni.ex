@@ -15,7 +15,7 @@ defmodule Omni do
     - [`Anthropic`](`Omni.Providers.Anthropic`) - chat with any of of the Claude models.
     - [`Google`](`Omni.Providers.Google`) - chat with any of of the Gemini models.
     - [`Ollama`](`Omni.Providers.Ollama`) - use Ollama to chat with any local model.
-    - [`OpenAI`](`Omni.Providers.OpenAI`) - configurable with any other OpenAI compatible chat API.
+    - [`OpenAI`](`Omni.Providers.OpenAI`) - chat with ChatGPT or **any** other OpenAI compatible API.
   - 🛜 Streaming API requests
     - Stream to an Enumerable
     - Or stream messages to any Elixir process
