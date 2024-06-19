@@ -5,9 +5,9 @@ defmodule Omni.MixProject do
     [
       app: :omni,
       name: "Omni",
-      description: "TODO",
+      description: "One client for all LLMs. Universal Elixir chat completion API client.",
       source_url: "https://github.com/lebrunel/omni",
-      version: "0.0.1",
+      version: "0.1.0",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
