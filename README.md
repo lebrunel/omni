@@ -1,5 +1,7 @@
 # Omni
 
+![Omni](https://raw.githubusercontent.com/lebrunel/omni/main/media/poster.png)
+
 ![Hex.pm](https://img.shields.io/hexpm/v/omni?color=informational)
 ![License](https://img.shields.io/github/license/lebrunel/omni?color=informational)
 ![Build Status](https://img.shields.io/github/actions/workflow/status/lebrunel/omni/elixir.yml?branch=main)

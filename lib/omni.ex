@@ -1,6 +1,10 @@
 defmodule Omni do
   @version Keyword.fetch!(Mix.Project.config(), :version)
   @moduledoc """
+  ![Omni](https://raw.githubusercontent.com/lebrunel/omni/main/media/poster.png)
+
+  ![License](https://img.shields.io/github/license/lebrunel/omni?color=informational)
+
   Omni focusses on one thing only - being a chat interface to *any* LLM provider.
   If you want a full featured client for a specific provider, supporting all
   available API endpoints, this is probably not it. If you want a single client
