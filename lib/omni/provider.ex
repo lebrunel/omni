@@ -115,7 +115,7 @@ defmodule Omni.Provider do
   Refer to the documentation for each provider to understand the expected
   response format.
   """
-  @type response() :: keyword()
+  @type response() :: map()
 
   @providers %{
     anthropic: Omni.Providers.Anthropic,
